@@ -15,7 +15,7 @@ uint64_t convertToUint64 (double number) {
 }
 
 bool getBit (const uint64_t number, const uint8_t index) {
-    /// Your code here...
+    return 0;
 }
 
 
@@ -23,8 +23,23 @@ bool getBit (const uint64_t number, const uint8_t index) {
  * Checkers here:
  */
 
+bool checkForDenormal (uint64_t number) {
+    return (number & 0x7FF0000000000001) == 0x1;
+}
+
+bool checkForNormal (uint64_t number) {
+    uint64_t exponent = number & 0x7FF0000000000000;
+    return (exponent != 0x0) && (exponent != 0x7FF0000000000000);
+}
+
+bool checkForPositive (uint64_t number) {
+    return (number & 0x8000000000000000) == 0x0;
+}
+
+
+
 bool checkForPlusZero (uint64_t number) {
-    /// Your code here.
+    return number == 0x0000000000000000;
 }
 
 bool checkForMinusZero (uint64_t number) {
@@ -32,35 +47,35 @@ bool checkForMinusZero (uint64_t number) {
 }
 
 bool checkForPlusInf (uint64_t number) {
-    /// Your code here.
+    return number == 0x7FF0000000000000;
 }
 
 bool checkForMinusInf (uint64_t number) {
-    /// Your code here.
+    return number == 0xFFF0000000000000;
 }
 
 bool checkForPlusNormal (uint64_t number) {
-    /// Your code here.
+    return checkForNormal(number) && checkForPositive(number);
 }
 
 bool checkForMinusNormal (uint64_t number) {
-    /// Your code here.
+    return checkForNormal(number) && !checkForPositive(number);
 }
 
 bool checkForPlusDenormal (uint64_t number) {
-    /// Your code here.
+    return checkForDenormal(number) && checkForPositive(number);
 }
 
 bool checkForMinusDenormal (uint64_t number) {
-    /// Your code here.
+    return checkForDenormal(number) && !checkForPositive(number);
 }
 
 bool checkForSignalingNan (uint64_t number) {
-    /// Your code here.
+    return (number & 0x7FF8000000000001) == 0x7FF0000000000001;
 }
 
 bool checkForQuietNan (uint64_t number) {
-    /// Your code here.
+    return (number & 0x7FF8000000000000) == 0x7FF8000000000000;
 }
 
 
@@ -82,11 +97,11 @@ void classify (double number) {
     }
 
     else if (checkForPlusNormal(convertToUint64(number))) {
-        printf("Plus normal\n");
+        printf("Plus regular\n");
     }
 
     else if (checkForMinusNormal(convertToUint64(number))) {
-        printf("Minus normal\n");
+        printf("Minus regular\n");
     }
 
     else if (checkForPlusDenormal(convertToUint64(number))) {
@@ -108,4 +123,10 @@ void classify (double number) {
     else {
         printf("Error.\n");
     }
+}
+
+int main(int argc, char* argv[])
+{
+    classify(strtod(argv[1], NULL));
+    return 0;
 }
