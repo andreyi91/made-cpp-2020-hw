@@ -14,15 +14,6 @@ uint64_t convertToUint64 (double number) {
     return *((uint64_t *)(&number));
 }
 
-bool getBit (const uint64_t number, const uint8_t index) {
-    return 0;
-}
-
-
-/**
- * Checkers here:
- */
-
 bool checkForDenormal (uint64_t number) {
     return (number & 0x7FF0000000000001) == 0x1;
 }
@@ -36,6 +27,9 @@ bool checkForPositive (uint64_t number) {
     return (number & 0x8000000000000000) == 0x0;
 }
 
+/**
+ * Checkers here:
+ */
 
 
 bool checkForPlusZero (uint64_t number) {
