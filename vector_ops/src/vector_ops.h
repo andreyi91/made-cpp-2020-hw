@@ -1,51 +1,29 @@
 #pragma once
-#include <vector>
 #include <iostream>
 #include <cstdint>
 
-using std::cin;
-using std::cout;
-using std::endl;
-using std::vector;
+namespace task
+{
 
+	// Your code here...
 
-namespace task {
+	using std::cin;
+	using std::cout;
+	using std::endl;
+	using std::vector;
 
-// Your code here...
+	vector<int> operator+(
+		const vector<int> &a,
+		const vector<int> &b)
+	{
+		vector<int> c;
 
-vector<int> scan_vec () {
-	size_t N;
-	cin >> N;
+		for (size_t i = 0; i < a.size(); ++i)
+		{
+			c.push_back(a[i] + b[i]);
+		}
 
-	vector<int> arr;
-
-	for (size_t i = 0; i < N; ++ i) {
-		int x;
-		cin >> x;
-		arr.push_back(x);
-	}
-	return arr;
-
-}
-
-void print_vec (vector<int> x) {
-	for (size_t i = 0; i < x.size(); ++ i) {
-		cout << x[i] << " ";
+		return c;
 	}
 
-	cout << endl;
-}
-
-int main() {
-	vector<int> arr = scan_vec();
-	print_vec(arr);
-	//arr.push_back(123);
-	//arr.push_back(456);
-	//arr.pop_back();
-
-
-	return 0;
-}
-
-
-}  // namespace task
+} // namespace task
