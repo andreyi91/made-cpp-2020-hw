@@ -19,14 +19,14 @@ count_det:
 	mul r3, r3, r7
 	mul r6, r6, r7
 	ldrsb r7, [r0], #4
-        mul r3, r3, r7
-        mul r4, r4, r7
-        ldrsb r7, [r0], #4
-        mul r2, r2, r7
-        mul r6, r6, r7
-        ldrsb r7, [r0], #4
-        mul r1, r1, r7
-        mul r5, r5, r7
+    mul r3, r3, r7
+    mul r4, r4, r7
+    ldrsb r7, [r0], #4
+    mul r2, r2, r7
+    mul r6, r6, r7
+    ldrsb r7, [r0], #4
+    mul r1, r1, r7
+    mul r5, r5, r7
 
 	add r0, r1, r2
 	add r0, r3
