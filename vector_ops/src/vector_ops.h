@@ -144,7 +144,6 @@ namespace task
     vector<double> reverse(
             vector<double> &a)
     {
-	    double temp;
         for (size_t i = 0; i < a.size() / 2; ++i)
         {
             std::swap(a[i], a[a.size() - i - 1]);
