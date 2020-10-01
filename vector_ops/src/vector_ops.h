@@ -167,7 +167,7 @@ namespace task
             const vector<int> &a,
             const vector<int> &b)
     {
-	    vector<int> c;
+	vector<int> c;
         for (size_t i = 0; i < a.size(); ++i)
         {
             c.push_back(a[i] & b[i]);
