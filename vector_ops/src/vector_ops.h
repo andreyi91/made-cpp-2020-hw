@@ -47,7 +47,7 @@ namespace task
         return c;
     }
 
-    vector<double> operator+(           //??? should it perform type conversion?
+    vector<double> operator+(
             const vector<double> &a)
     {
         vector<double> c;
@@ -58,14 +58,14 @@ namespace task
         return c;
     }
 
-    vector<double> operator*(
+    double operator*(
             const vector<double> &a,
             const vector<double> &b)
     {
-        vector<double> c;
+        double c = 0;
         for (size_t i = 0; i < a.size(); ++i)
         {
-            c.push_back(a[i] * b[i]);
+            c += a[i] * b[i];
         }
         return c;
     }
@@ -86,32 +86,94 @@ namespace task
             const vector<double> &a,
             const vector<double> &b)
     {
-        vector<double> c;
-        bool collin = true;
-
-        c = a % b;
-        for (size_t i = 0; i < c.size(); ++i)
+        const double EPS = 1e-8;
+        double k = a[0] / b[0];
+        for (int i = 0; i < a.size(); ++i)
         {
-            if ( c[i] != 0 )
+            if (fabs(a[i] / b[i] - k) > EPS)
             {
-                collin = false;
+                return false;
             }
         }
-        return collin;
+        return true;
     }
 
     bool operator&&(
             const vector<double> &a,
             const vector<double> &b)
     {
-        vector<double> c;
-        bool codir = false;
-        if (a || b)
+        if ((a || b) && (a[0] * b[0] >= 0))
         {
-            codir = (a[0] / b[0]) < 0;      // may be check for b[0] != 0
+            return true;
         }
-        return codir;
+        else
+        {
+            return false;
+        }
     }
 
+    std::istream& operator>>(
+            std::istream &in,
+            vector<double> &a)
+    {
+        int n;
+        in >> n;
+        double d;
+
+        a.resize(n);
+        for (size_t i = 0; i < n; ++i)
+        {
+            in >> d;
+            a[i] = d;
+        }
+        return in;
+    }
+
+    std::ostream& operator<<(
+            std::ostream &out,
+            const vector<double> &a)
+    {
+        for (size_t i = 0; i < a.size(); ++i)
+        {
+            out << a[i] << " ";
+        }
+        out << endl;
+        return out;
+    }
+
+    vector<double> reverse(
+            vector<double> &a)
+    {
+	    double temp;
+        for (size_t i = 0; i < a.size() / 2; ++i)
+        {
+            std::swap(a[i], a[a.size() - i - 1]);
+        }
+        return a;
+    }
+
+    vector<int> operator|(
+            const vector<int> &a,
+            const vector<int> &b)
+    {
+        vector<int> c;
+        for (size_t i = 0; i < a.size(); ++i)
+        {
+            c.push_back(a[i] | b[i]);
+        }
+        return c;
+    }
+
+    vector<int> operator&(
+            const vector<int> &a,
+            const vector<int> &b)
+    {
+	    vector<int> c;
+        for (size_t i = 0; i < a.size(); ++i)
+        {
+            c.push_back(a[i] & b[i]);
+        }
+        return c;
+    }
 
 } // namespace task
