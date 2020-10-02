@@ -4,13 +4,20 @@
 typedef std::function<int (int)> Op;
 
 
-
 Op compose (size_t n, Op ops[]) {
     /// Your code goes here.
-    for (i = 0; i < n; ++n)
-    {
-
+    if (n == 0) {
+        return [] (int x) -> int {
+            return x;
+        };
     }
+
+    return [=] (int input) -> int {
+        for (size_t i = 1; i <= n; ++i) {
+            input = ops[n - i](input);
+        }
+        return input;
+    };
 }
 
 
