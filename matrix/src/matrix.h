@@ -14,12 +14,17 @@ class SizeMismatchException : public std::exception {};
 
 
 class Matrix {
+private:
+
+    int rows, cols;
+    double **matr;
 
 public:
 
     Matrix();
     Matrix(size_t rows, size_t cols);
     Matrix(const Matrix& copy);
+    ~Matrix();
     Matrix& operator=(const Matrix& a);
 
     double& get(size_t row, size_t col);
@@ -27,8 +32,8 @@ public:
     void set(size_t row, size_t col, const double& value);
     void resize(size_t new_rows, size_t new_cols);
 
-    /* ??? */ operator[](size_t row);
-    /* ??? */ operator[](size_t row) const;
+    double* operator[](size_t row);
+    const double* operator[](size_t row) const;
 
     Matrix& operator+=(const Matrix& a);
     Matrix& operator-=(const Matrix& a);
@@ -54,7 +59,8 @@ public:
     bool operator==(const Matrix& a) const;
     bool operator!=(const Matrix& a) const;
 
-    // Your code goes here...
+    size_t ncols() const;
+    size_t nrows() const;
 
 };
 
