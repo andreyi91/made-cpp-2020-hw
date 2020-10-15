@@ -4,39 +4,37 @@
 
 namespace task {
 
-using std::cin;
-using std::cout;
 using std::endl;
 using std::vector;
 
 vector<double> operator+(const vector<double> &a, const vector<double> &b) {
-  vector<double> c;
+  vector<double> c(a.size());
   for (size_t i = 0; i < a.size(); ++i) {
-    c.push_back(a[i] + b[i]);
+    c[i] = a[i] + b[i];
   }
   return c;
 }
 
 vector<double> operator-(const vector<double> &a, const vector<double> &b) {
-  vector<double> c;
+  vector<double> c(a.size());
   for (size_t i = 0; i < a.size(); ++i) {
-    c.push_back(a[i] - b[i]);
+    c[i] = a[i] - b[i];
   }
   return c;
 }
 
 vector<double> operator-(const vector<double> &a) {
-  vector<double> c;
+  vector<double> c(a.size());
   for (size_t i = 0; i < a.size(); ++i) {
-    c.push_back(-a[i]);
+    c[i] = -a[i];
   }
   return c;
 }
 
 vector<double> operator+(const vector<double> &a) {
-  vector<double> c;
+  vector<double> c(a.size());
   for (size_t i = 0; i < a.size(); ++i) {
-    c.push_back(a[i]);
+    c[i] = a[i];
   }
   return c;
 }
@@ -51,18 +49,24 @@ double operator*(const vector<double> &a, const vector<double> &b) {
 
 // cross product defined for 3-dimensional vectors
 vector<double> operator%(const vector<double> &a, const vector<double> &b) {
-  vector<double> c;
-  c.push_back(a[2] * b[1] - a[1] * b[2]);
-  c.push_back(a[0] * b[2] - a[2] * b[0]);
-  c.push_back(a[1] * b[0] - a[0] * b[1]);
+  vector<double> c(a.size());
+  c[0] = a[2] * b[1] - a[1] * b[2];
+  c[1] = a[0] * b[2] - a[2] * b[0];
+  c[2] = a[1] * b[0] - a[0] * b[1];
   return c;
 }
 
 bool operator||(const vector<double> &a, const vector<double> &b) {
   const double EPS = 1e-8;
-  double k = a[0] / b[0];
+  double k;
   for (int i = 0; i < a.size(); ++i) {
-    if (fabs(a[i] / b[i] - k) > EPS) {
+    if (b[i] != 0) {
+      k = a[i] / b[i];
+      break;
+    }
+  }
+  for (int i = 0; i < a.size(); ++i) {
+    if (fabs(b[i] * k - a[i]) > EPS) {
       return false;
     }
   }
@@ -106,17 +110,17 @@ vector<double> reverse(vector<double> &a) {
 }
 
 vector<int> operator|(const vector<int> &a, const vector<int> &b) {
-  vector<int> c;
+  vector<int> c(a.size());
   for (size_t i = 0; i < a.size(); ++i) {
-    c.push_back(a[i] | b[i]);
+    c[i] = a[i] | b[i];
   }
   return c;
 }
 
 vector<int> operator&(const vector<int> &a, const vector<int> &b) {
-  vector<int> c;
+  vector<int> c(a.size());
   for (size_t i = 0; i < a.size(); ++i) {
-    c.push_back(a[i] & b[i]);
+    c[i] = a[i] & b[i];
   }
   return c;
 }
