@@ -2,7 +2,7 @@
 #include <memory>
 #include <vector>
 
-size_t CHUNK_SIZE = 10;
+size_t CHUNK_SIZE = 1000;
 
 template <typename T>
 struct Chunk {
