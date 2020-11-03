@@ -1,28 +1,68 @@
 #include <iostream>
+#include <memory>
 #include <vector>
 
-size_t CHUNK_SIZE = 100;
+size_t CHUNK_SIZE = 10;
+
+template <typename T>
+struct Chunk {
+  size_t size;
+  T* ptr;
+
+  Chunk() : size(0), ptr(nullptr){};
+};
+
+template <typename T>
+struct Node {
+  Node* next;
+  Chunk<T>* chunk;
+
+  Node() : next(nullptr), chunk(nullptr){};
+  Node(const Chunk<T>& chunk) : next(nullptr), chunk(chunk){};
+};
+
+template <typename T>
+struct List {
+  Node<T>* begin;
+  Node<T>* tail;
+  size_t size;
+
+  List() : begin(nullptr), tail(nullptr), size(0){};
+
+  void insert() {
+    Chunk<T>* chunk = new Chunk<T>;
+    chunk->ptr = reinterpret_cast<T*>(new char[CHUNK_SIZE * sizeof(T)]);
+    chunk->size = CHUNK_SIZE;
+    Node<T>* node = new Node<T>;
+    node->chunk = chunk;
+    if (this->size == 0) {
+      this->begin = node;
+      this->tail = node;
+    } else {
+      this->tail->next = node;
+      this->tail = node;
+    }
+    ++this->size;
+  };
+
+  void erase() {
+    delete[] reinterpret_cast<char*>(this->begin->chunk);
+    if (this->size == 1) {
+      delete[] this->begin;
+      this->begin = this->tail = nullptr;
+    } else if (this->size > 1) {
+      Node<T>* node = this->begin->next;
+      delete[] this->begin;
+      this->begin = node;
+    }
+    --this->size;
+  };
+};
 
 template <typename T>
 class Allocator {
  private:
-  template <typename U>
-  struct Chunk {
-    size_t size;
-    U* ptr = nullptr;
-    Chunk* next;
-  };
-
-  Chunk<T>* firstChunk;
-  static unsigned memberCount;
-
-  Chunk<T>* allocateChunk() {
-    Chunk<T>* chunk = new Chunk<T>;
-    chunk->ptr = reinterpret_cast<T*>(new char[CHUNK_SIZE * sizeof(T)]);
-    chunk->size = CHUNK_SIZE;
-    chunk->next = nullptr;
-    return chunk;
-  };
+  std::shared_ptr<List<T>> list_ptr;
 
  public:
   typedef T value_type;
@@ -40,55 +80,43 @@ class Allocator {
   typedef std::true_type is_always_equal;
 
   Allocator() {
-    this->firstChunk = nullptr;
-    memberCount = 1;
+    this->list_ptr = *(new std::shared_ptr<List<T>>(new List<T>()));
   };
 
   Allocator<T>& operator=(const Allocator& other) {
     if (&other == this) {
       return *this;
     }
-    this->firstChunk = other.firstChunk;
-    ++memberCount;
+    this->list_ptr = other.list_ptr;
     return *this;
   };
 
   Allocator(const Allocator& copy) { *this = copy; };
 
   ~Allocator() {
-    memberCount--;
-    if (memberCount == 0) {
-      Chunk<T>* chunk = this->firstChunk;
-      bool destroyed = false;
-      while (destroyed != true) {
-        if (chunk == nullptr) {
-          destroyed = true;
-        } else {
-          Chunk<T>* to_del = chunk;
-          chunk = chunk->next;
-          delete[] reinterpret_cast<char*>(to_del);
-        }
-      }
+    while (this->list_ptr->begin != nullptr) {
+      this->list_ptr->erase();
     }
   };
 
-  T* allocate(const size_t n) {
-    if (this->firstChunk == nullptr) {
-      this->firstChunk = allocateChunk();
+  T* allocate(size_t n) {
+    if (list_ptr->begin == nullptr) {
+      list_ptr->insert();
     }
-    Chunk<T>* chunk = this->firstChunk;
-    T* mem_ptr;
+    Node<T>* node = list_ptr->begin;
+    pointer mem_ptr;
     bool allocated = false;
     while (!allocated) {
-      if (chunk->size >= n) {
-        mem_ptr = chunk->ptr;
-        chunk->ptr += n * sizeof(T);
-        chunk->size -= n;
+      if (node->chunk->size >= n) {
+        mem_ptr = node->chunk->ptr;
+        node->chunk->ptr += n * sizeof(T);
+        node->chunk->size -= n;
         allocated = true;
-      } else if (chunk->next != nullptr) {
-        chunk = chunk->next;
+      } else if (node->next != nullptr) {
+        node = node->next;
       } else {
-        chunk->next = allocateChunk();
+        list_ptr->insert();
+        node = node->next;
       }
     }
     return mem_ptr;
@@ -97,8 +125,8 @@ class Allocator {
   void deallocate(T* p, const size_t n){};
 
   template <typename... Args>
-  void construct(T* p, const Args&&... args) {
-    new (p) T(args...);
+  void construct(T* p, Args&&... args) {
+    ::new ((void*)p) T(std::forward<Args>(args)...);
   };
 
   void destroy(T* p) { p->~T(); };
