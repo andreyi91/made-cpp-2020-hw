@@ -1,5 +1,3 @@
-.DS_Store
-.clang-format
 geometry/src/a.out
 geometry/src/geometry.h.gch
 geometry/src/main.cpp
