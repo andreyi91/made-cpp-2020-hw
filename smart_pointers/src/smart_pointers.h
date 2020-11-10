@@ -97,7 +97,7 @@ class SharedPtr {
   };
 
   SharedPtr<T>& operator=(const SharedPtr<T>& other) noexcept {
-    this->~SharedPtr<T>();  // mb change
+    this->~SharedPtr<T>();
     cb = other.cb;
     ++other.cb->shrd_count;
     return *this;
@@ -119,8 +119,7 @@ class SharedPtr {
   size_t use_count() const noexcept { return cb->shrd_count; };
 
   void reset(T* p = nullptr) noexcept {
-    // this->~SharedPtr<T>();
-    --cb->shrd_count;
+    this->~SharedPtr<T>();
     *this = SharedPtr<T>(p);
   };
 
@@ -176,8 +175,10 @@ class WeakPtr {
   };
 
   ~WeakPtr() {
-    if (cb->weak_count > 0) {
-      --cb->weak_count;
+    if (cb != nullptr) {
+      if (cb->weak_count > 0) {
+        --cb->weak_count;
+      }
     }
   };
 
