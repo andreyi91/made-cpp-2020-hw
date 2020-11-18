@@ -56,6 +56,8 @@ struct MoveTester {
 struct ArgForwardTester {
     std::string actions;
 
+    ArgForwardTester() {};
+
     ArgForwardTester(MoveTester a, MoveTester b, MoveTester c) {
         actions = a.action + b.action + c.action;
     }
