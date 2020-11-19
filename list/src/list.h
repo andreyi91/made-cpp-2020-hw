@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <iterator>
+#include <optional>
 
 #define assert(expr, msg) \
   if (!expr) std::cerr << msg << std::endl;
@@ -14,11 +15,11 @@ class list {
  private:
   template <typename U>
   struct Node {
-    U val;
+    std::optional<U> val;
     Node* next;
     Node* prev;
 
-    Node(){};
+    Node() = default;
 
     Node(const U& value) : val(value){};
 
@@ -76,8 +77,8 @@ class list {
       ptr->next;
       return t;
     }
-    reference operator*() const { return (ptr->val); }
-    pointer operator->() const { return &(ptr->val); }
+    reference operator*() const { return *(ptr->val); }
+    pointer operator->() const { return &(*(ptr->val)); }
     iterator& operator--() {
       ptr = ptr->prev;
       return *this;
@@ -124,8 +125,8 @@ class list {
       ptr->next;
       return t;
     }
-    reference operator*() const { return (ptr->val); }
-    pointer operator->() const { return &(ptr->val); }
+    reference operator*() const { return *(ptr->val); }
+    pointer operator->() const { return &(*(ptr->val)); }
     const_iterator& operator--() {
       ptr = ptr->prev;
       return *this;
@@ -182,7 +183,7 @@ class list {
     pointer_node ptr_to;
     for (size_type i(0); i < from_list_size; ++i) {
       ptr_to = _rebound_traits::allocate(allocator, 1);
-      _rebound_traits::construct(allocator, ptr_to, ptr_from->val);
+      _rebound_traits::construct(allocator, ptr_to, *(ptr_from->val));
       _add_node(ptr_to, to_list_back);
       ptr_from = ptr_from->next;
 
@@ -330,13 +331,13 @@ class list {
     return alloc;
   }
 
-  T& front() { return _front->val; }
+  T& front() { return *(_front->val); }
 
-  const T& front() const { return _front->val; }
+  const T& front() const { return *(_front->val); }
 
-  T& back() { return _back->prev->val; }
+  T& back() { return *(_back->prev->val); }
 
-  const T& back() const { return _back->prev->val; }
+  const T& back() const { return *(_back->prev->val); }
 
   iterator begin() { return iterator(_front); }
 
@@ -610,8 +611,9 @@ class list {
   void sort() {
     for (iterator out = begin(); out != --end(); ++out) {
       for (iterator in = out; in != end(); ++in) {
-        if (in.get_node_pointer()->val < out.get_node_pointer()->val)
-          std::swap(in.get_node_pointer()->val, out.get_node_pointer()->val);
+        if (*(in.get_node_pointer()->val) < *(out.get_node_pointer()->val))
+          std::swap(*(in.get_node_pointer()->val),
+                    *(out.get_node_pointer()->val));
       }
     }
   }
